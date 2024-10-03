@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.List;
 import static io.restassured.RestAssured.*;
 import static io.restassured.matcher.RestAssuredMatchers.*;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.*;
 
 
@@ -95,5 +96,10 @@ public class ApiTest {
                     .body("[0].id", instanceOf(Integer.class)) // Valida que o campo id é do tipo Integer
                     .body("[0].title", instanceOf(String.class)) // Valida que o campo title é do tipo String
                     .body("[0].body", instanceOf(String.class)); // Valida que o campo body é do tipo String
+    }
+
+    @Test
+    public void givenPostsEndpoint_whenGetRequest_thenValidateResponseUsingJsonSchema() {
+        get().then().assertThat().body(matchesJsonSchemaInClasspath("posts-schema.json"));
     }
 }
