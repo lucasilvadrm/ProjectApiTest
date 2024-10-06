@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>ProjectWithMaven</artifactId>
+    <artifactId>ProjectApiTest</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -69,19 +69,16 @@
     </dependencies>
     <build>
         <plugins>
-            <!-- Plugin Maven Surefire para executar os testes -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M8</version>
                 <configuration>
                     <systemPropertyVariables>
-                        <!-- Diretório onde os resultados dos testes serão armazenados -->
                         <allure.results.directory>target/allure-results</allure.results.directory>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
-            <!-- Plugin Maven para gerar o relatório Allure -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
