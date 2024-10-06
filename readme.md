@@ -40,6 +40,10 @@ Para utilizar servidor Allure Reports:
   mvn allure:serve
 ```
 
+## Screenshots relatório Allure
+
+![App Screenshot](screenshots/dash.jpg)
+
 
 ## Autor
 
