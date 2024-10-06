@@ -1,14 +1,17 @@
 package com.restapi;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
+
 import static io.restassured.RestAssured.*;
 import static io.restassured.matcher.RestAssuredMatchers.*;
-import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.*;
+import static io.restassured.module.jsv.JsonSchemaValidator.*;
 
 
 public class ApiTest {
@@ -18,7 +21,6 @@ public class ApiTest {
 
     @BeforeClass
     public static void setup() {
-        // Configurar a URI base e o caminho base para a API Rest
         baseURI = "http://jsonplaceholder.typicode.com";
         basePath = "/posts";
     }
@@ -28,26 +30,28 @@ public class ApiTest {
         return getApiResponse(STATUS_CODE_OK);
     }
 
+    @Description("Método que retorna valida se o status code foi o esperado.")
     public Response getApiResponse(int status) {
-       return given()
+        return given()
+                .filter(new AllureRestAssured())
                 .when()
-                    .get()
+                .get()
                 .then()
-                    .assertThat()
-                        .statusCode(status)
+                .assertThat()
+                .statusCode(status)
                 .extract()
-                    .response();
+                .response();
     }
 
     @Test
+    @Description("Verifica se o status code foi 200.")
     public void givenPostsEndpoint_whenGetRequest_thenStatusCode200() {
-        // verifica status code
         getApiResponse();
     }
 
     @Test
+    @Description("verifica status code quando existe algum erro na declaração do endpoint.")
     public void givenPostsEndpoint_whenGetRequest_thenStatusCode404() {
-        // verifica status code quando existe algum erro na declaração do endpoint
         String originalBasePath = basePath;
 
         try {
@@ -59,46 +63,47 @@ public class ApiTest {
     }
 
     @Test
+    @Description("verifica se retorna 100 objetos na lista.")
     public void givenPostsEndpoint_whenGetRequest_thenArraySizeIs100() {
-        // verifica se retorna 100 objetos na lista
         getApiResponse()
                 .then()
-                    .body("size()", is(100));
+                .body("size()", is(100));
     }
 
     @Test
+    @Description("verifica se a resposta da rota é um array.")
     public void givenPostsEndpoint_whenGetRequest_thenResponseIsArray() {
-        // verifica se a resposta da rota é um array
         getApiResponse()
                 .then()
-                    .body("$", instanceOf(List.class));
+                .body("$", instanceOf(List.class));
     }
 
     @Test
+    @Description("verifica se a lista retornada está vazia.")
     public void givenPostsEndpoint_whenGetRequest_thenResponseListIsNotEmpty() {
-        // verifica se a lista retornada está vazia
         getApiResponse()
                 .then()
-                    .body("size()", greaterThan(0));
+                .body("size()", greaterThan(0));
     }
 
     @Test
+    @Description("valida shape do objeto dentro do array.")
     public void givenPostsEndpoint_whenGetRequest_thenValidateObjectShape() {
-        // valida shape do objeto dentro do array
         getApiResponse()
                 .then()
-                    .body("size()", greaterThan(0)) // Valida que a lista não está vazia
-                    .body("[0]", hasKey("userId")) // Valida que o campo userId está presente
-                    .body("[0]", hasKey("id")) // Valida que o campo id está presente
-                    .body("[0]", hasKey("title")) // Valida que o campo title está presente
-                    .body("[0]", hasKey("body")) // Valida que o campo body está presente
-                    .body("[0].userId", instanceOf(Integer.class)) // Valida que o campo userId é do tipo Integer
-                    .body("[0].id", instanceOf(Integer.class)) // Valida que o campo id é do tipo Integer
-                    .body("[0].title", instanceOf(String.class)) // Valida que o campo title é do tipo String
-                    .body("[0].body", instanceOf(String.class)); // Valida que o campo body é do tipo String
+                .body("size()", greaterThan(0))
+                .body("[0]", hasKey("userId"))
+                .body("[0]", hasKey("id"))
+                .body("[0]", hasKey("title"))
+                .body("[0]", hasKey("body"))
+                .body("[0].userId", instanceOf(Integer.class))
+                .body("[0].id", instanceOf(Integer.class))
+                .body("[0].title", instanceOf(String.class))
+                .body("[0].body", instanceOf(String.class));
     }
 
     @Test
+    @Description("valida shape da resposta utilizando json-schema.")
     public void givenPostsEndpoint_whenGetRequest_thenValidateResponseUsingJsonSchema() {
         get().then().assertThat().body(matchesJsonSchemaInClasspath("posts-schema.json"));
     }
